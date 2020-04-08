@@ -54,8 +54,16 @@ def imDisplay(filename: str, representation: int):
     :return: A YIQ in image color space
 """
 def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
-    transform = np.ndarray([[0.299, 0.587, 0.114], [0.596, -0.275, -0.321], [0.212, -0.523, 0.311]])
-    return transform.dot(imgRGB)
+
+    R = imgRGB[:, :, 0] #red channel
+    G = imgRGB[:, :, 1] #green channel
+    B = imgRGB[:, :, 2] #blue channel
+
+    Y = 0.299*R + 0.587*G + 0.114*B
+    I = 0.596*R - 0.275*G - 0.321*B
+    Q = 0.212*R - 0.523*G + 0.311*B
+
+    return np.array([Y, I, Q])
     pass
 
 
@@ -65,8 +73,10 @@ def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
     :return: A RGB in image color space
 """
 def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
-    transform = np.ndarray([[0.299, 0.587, 0.114], [0.596, -0.275, -0.321], [0.212, -0.523, 0.311]])
-    mat = transform.transpose()
+    transform = np.array([[0.299, 0.587, 0.114],
+                          [0.596, -0.275, -0.321],
+                          [0.212, -0.523, 0.311]])
+    mat = np.linalg.inv(transform)
     return mat.dot(imgYIQ)
     pass
 
