@@ -17,12 +17,12 @@ def myID() -> np.int:
 """
 def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
 
-    if(representation == 1): #Gray_Scale representation
+    if(representation == 1):  # Gray_Scale representation
         img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-    else: # =2, RGB
+    else:  # =2, RGB
         img = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
 
-    #normalize
+    # normalize
     norm_img = cv2.normalize(img, None, 0, 1, cv2.NORM_MINMAX, cv2.CV_32F)
 
     print("type is: ", norm_img.dtype)
@@ -54,16 +54,13 @@ def imDisplay(filename: str, representation: int):
     :return: A YIQ in image color space
 """
 def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
-
-    R = imgRGB[:, :, 0] #red channel
-    G = imgRGB[:, :, 1] #green channel
-    B = imgRGB[:, :, 2] #blue channel
-
-    Y = 0.299*R + 0.587*G + 0.114*B
-    I = 0.596*R - 0.275*G - 0.321*B
-    Q = 0.212*R - 0.523*G + 0.311*B
-
-    return np.array([Y, I, Q])
+    s = imgRGB.shape
+    img_reshape = imgRGB.reshape((s[2], (s[0]*s[1])))
+    transform = np.array([[0.299, 0.587, 0.114],
+                          [0.596, -0.275, -0.321],
+                          [0.212, -0.523, 0.311]])
+    new_img = transform.dot(img_reshape)
+    return new_img.reshape(s)
     pass
 
 
@@ -77,7 +74,10 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
                           [0.596, -0.275, -0.321],
                           [0.212, -0.523, 0.311]])
     mat = np.linalg.inv(transform)
-    return mat.dot(imgYIQ)
+    s = imgYIQ.shape
+    img_reshape = imgYIQ.reshape((s[2], (s[0] * s[1])))
+    new_img = mat.dot(img_reshape)
+    return new_img.reshape(s)
     pass
 
 
