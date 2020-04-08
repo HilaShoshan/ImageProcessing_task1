@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
+from typing import List
+
 
 def myID() -> np.int:
     return 207931106
@@ -14,11 +16,25 @@ def myID() -> np.int:
     :return: The image object
 """
 def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
+
     if(representation == 1): #Gray_Scale representation
         img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+        img_size = img.shape
+
     else: # =2, RGB
         img = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
-    return img
+        img_size = img.shape[0], img.shape[1]
+
+    #normalize
+    #norm_img = cv2.resize(img, img_size)
+    print("img_size: {}".format(img_size))
+    norm_img = np.zeros(img_size)
+    norm_img = cv2.normalize(img, norm_img, 0, 255, cv2.NORM_MINMAX)
+
+    #final_img = np.asarray(norm_img) ???
+    print("type is: ", norm_img.dtype)
+
+    return norm_img
     pass
 
 
@@ -30,6 +46,9 @@ def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
 """
 def imDisplay(filename: str, representation: int):
     img = imReadAndConvert(filename, representation)
+
+    print(img[20, 55])
+
     plt.imshow(img)
     plt.show()
     return None
@@ -70,10 +89,11 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
 def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
     """
-        Quantized an image in to **nQuant** colors
-        :param imOrig: The original image (RGB or Gray scale)
-        :param nQuant: Number of colors to quantize the image to
-        :param nIter: Number of optimization loops
-        :return: (List[qImage_i],List[error_i])
+    Quantized an image in to **nQuant** colors
+    :param imOrig: The original image (RGB or Gray scale)
+    :param nQuant: Number of colors to quantize the image to
+    :param nIter: Number of optimization loops
+    :return: (List[qImage_i],List[error_i])
     """
-    pass
+pass
+

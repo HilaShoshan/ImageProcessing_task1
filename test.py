@@ -2,10 +2,12 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
-import ex1_utils
+from ex1_utils import *
 
 def main():
-    ex1_utils.imDisplay('beach.jpg', 1)
+    #imReadAndConvert("beach.jpg", 2)
+    #imDisplay("bac_con.png", 1)
+    imDisplay("beach.jpg", 2)
 
-#if __name__ == '__main__':
-#    main()
+if __name__ == '__main__':
+    main()
