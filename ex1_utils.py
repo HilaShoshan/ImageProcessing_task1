@@ -90,16 +90,25 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
     return: (imgEq,histOrg,histEQ)
 """
 def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray):
+
     isRGB = bool(imgOrig.shape[-1] == 3)
     if(isRGB):
         imgYIQ = transformRGB2YIQ(imgOrig)
         imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
-    hist, bin_edges = np.histogram(imgOrig, bins=256, range=(0.0, 255.0), density=True)  # weights ???????
-    print(hist.sum())
-    histOrg = hist  # ??????
-    cdf = np.cumsum(hist)
-    cdf = np.round(cdf*255)  # 255 is the max value we want to reach
-    return histOrg
+
+    histOrg, bin_edges = np.histogram(imgOrig, bins=256, range=(0.0, 255.0), density=True)
+    cdf = histOrg.cumsum()  # cumulative distribution function
+    cdf = np.round(cdf*255 / cdf[-1])  # 255 is the max value we want to reach
+
+    # mapping the pixels
+    imgEq = np.zeros(imgOrig.shape)
+    ### g_min = cdf.min()
+    ### for pixel in histOrg:
+    ###   pixel = np.ceil(256 * )
+
+    histEQ, bin_edges2 = np.histogram(imgEq, bins=256, range=(0.0, 255.0), density=True)
+
+    return imgEq, histOrg, histEQ
     pass
 
 
