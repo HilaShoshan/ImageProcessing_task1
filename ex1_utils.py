@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 
 from typing import List
 
+LOAD_GRAY_SCALE = 1
+LOAD_RGB = 2
+
 
 def myID() -> np.int:
     return 207931106
@@ -11,9 +14,9 @@ def myID() -> np.int:
 
 """ 4.1
     Reads an image, and returns in converted as requested
-    :param filename: The path to the image
-    :param representation: GRAY_SCALE or RGB
-    :return: The image object
+    param filename: The path to the image
+    param representation: GRAY_SCALE or RGB
+    return: The image object
 """
 def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
 
@@ -33,9 +36,9 @@ def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
 
 """ 4.2
     Reads an image as RGB or GRAY_SCALE and displays it
-    :param filename: The path to the image
-    :param representation: GRAY_SCALE or RGB
-    :return: None
+    param filename: The path to the image
+    param representation: GRAY_SCALE or RGB
+    return: None
 """
 def imDisplay(filename: str, representation: int):
     img = imReadAndConvert(filename, representation)
@@ -50,8 +53,8 @@ def imDisplay(filename: str, representation: int):
 
 """ 4.3 (1)
     Converts an RGB image to YIQ color space
-    :param imgRGB: An Image in RGB
-    :return: A YIQ in image color space
+    param imgRGB: An Image in RGB
+    return: A YIQ in image color space
 """
 def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
     s = imgRGB.shape
@@ -66,8 +69,8 @@ def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
 
 """ 4.3 (2)
     Converts an YIQ image to RGB color space
-    :param imgYIQ: An Image in YIQ
-    :return: A RGB in image color space
+    param imgYIQ: An Image in YIQ
+    return: A RGB in image color space
 """
 def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
     transform = np.array([[0.299, 0.587, 0.114],
@@ -81,12 +84,22 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
     pass
 
 
+""" 4.4
+    Equalizes the histogram of an image
+    param imgOrig: Original Histogram. grayscale or RGB image to be equalized having values in the range [0, 1].
+    return: (imgEq,histOrg,histEQ)
+"""
 def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray):
-    """
-        Equalizes the histogram of an image
-        :param imgOrig: Original Histogram
-        :ret
-    """
+    isRGB = bool(imgOrig.shape[-1] == 3)
+    if(isRGB):
+        imgYIQ = transformRGB2YIQ(imgOrig)
+        imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
+    hist, bin_edges = np.histogram(imgOrig, bins=256, range=(0.0, 255.0), density=True)  # weights ???????
+    print(hist.sum())
+    histOrg = hist  # ??????
+    cdf = np.cumsum(hist)
+    cdf = np.round(cdf*255)  # 255 is the max value we want to reach
+    return histOrg
     pass
 
 

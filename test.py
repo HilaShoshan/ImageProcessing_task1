@@ -33,11 +33,16 @@ def test_YIQ2RGB():
     imDisplay('samp_rgb.jpg', 2)
 
 
+def test_hist():
+    bac_con_im = imReadAndConvert("bac_con.png", 1)
+    hsitogramEqualize(bac_con_im)
+
 def main():
     #test_display()
     #test_RGB2YIQ()
-    test_YIQ2RGB()
+    #test_YIQ2RGB()
     #bgr_yiq_testMyself()
+    test_hist()
 
 
 if __name__ == '__main__':
