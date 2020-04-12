@@ -58,11 +58,11 @@ def imDisplay(filename: str, representation: int):
 """
 def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
     s = imgRGB.shape
-    img_reshape = imgRGB.reshape((s[2], (s[0]*s[1])))
+    img_reshape = imgRGB.reshape((s[0] * s[1]), s[2])  # s[2] = 3
     transform = np.array([[0.299, 0.587, 0.114],
                           [0.596, -0.275, -0.321],
                           [0.212, -0.523, 0.311]])
-    new_img = transform.dot(img_reshape)
+    new_img = img_reshape.dot(transform)
     return new_img.reshape(s)
     pass
 
@@ -78,8 +78,8 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
                           [0.212, -0.523, 0.311]])
     mat = np.linalg.inv(transform)
     s = imgYIQ.shape
-    img_reshape = imgYIQ.reshape((s[2], (s[0] * s[1])))
-    new_img = mat.dot(img_reshape)
+    img_reshape = imgYIQ.reshape((s[0] * s[1]), s[2])
+    new_img = img_reshape.dot(mat)
     return new_img.reshape(s)
     pass
 
@@ -122,7 +122,9 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
 
     # find image's histogram (of probabilities)
-    histOrg, bin_edges = np.histogram(imOrig, bins=256, range=(0.0, 255.0), density=True)
+    #histOrg, bin_edges = np.histogram(imOrig, bins=256, range=(0.0, 255.0), density=True)
+    plt.hist(imOrig, bins=256, range=(0.0, 255.0), density=True)
+    plt.show()
 
     size = 255/nQuant  # The initial size given for each interval (fixed - equal division)
     z = np.zeros(nQuant+1)  # create an empty array representing the boundaries
