@@ -112,13 +112,27 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
     pass
 
 
-def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
-    """
+""" 4.5
     Quantized an image in to **nQuant** colors
     :param imOrig: The original image (RGB or Gray scale)
     :param nQuant: Number of colors to quantize the image to
     :param nIter: Number of optimization loops
     :return: (List[qImage_i],List[error_i])
     """
-pass
+def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
+
+    # find image's histogram (of probabilities)
+    histOrg, bin_edges = np.histogram(imOrig, bins=256, range=(0.0, 255.0), density=True)
+
+    size = 255/nQuant  # The initial size given for each interval (fixed - equal division)
+    z = np.zeros(nQuant+1)  # create an empty array representing the boundaries
+    for i in range(1, nQuant):
+        z[i] = z[i-1] + size
+    z[nQuant] = 255  # always start at 0 and ends at 255
+    print(z)
+
+    q = np.zeros(nQuant)
+    for i in range(nIter):
+        q[i] = 0  # formula from the class
+    pass
 
