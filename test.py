@@ -53,9 +53,9 @@ def test_quant():
 def main():
     #test_display()
     #test_RGB2YIQ()
-    test_YIQ2RGB()
+    #test_YIQ2RGB()
     #bgr_yiq_testMyself()
-    #test_hist()
+    test_hist()
     #test_quant()
 
 

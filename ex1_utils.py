@@ -19,12 +19,10 @@ def myID() -> np.int:
     return: The image object
 """
 def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
-
     if(representation == 1):  # Gray_Scale representation
         img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
     else:  # =2, RGB
         img = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
-
     # normalize
     norm_img = cv2.normalize(img, None, 0, 1, cv2.NORM_MINMAX, cv2.CV_32F)
 
@@ -42,9 +40,6 @@ def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
 """
 def imDisplay(filename: str, representation: int):
     img = imReadAndConvert(filename, representation)
-
-    print(img[20, 55])
-
     plt.imshow(img)
     plt.show()
     return None
@@ -57,14 +52,13 @@ def imDisplay(filename: str, representation: int):
     return: A YIQ in image color space
 """
 def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
-    print(imgRGB)
+    s = imgRGB.shape
+    img_reshape = imgRGB.reshape((s[0] * s[1]), s[2])  # s[2] = 3
     transform = np.array([[0.299, 0.587, 0.114],
                           [0.596, -0.275, -0.321],
                           [0.212, -0.523, 0.311]])
-    for i in range(imgRGB.shape[0]):
-        for j in range(imgRGB.shape[1]):
-            imgRGB[i][j] = transform.dot(imgRGB[i][j])
-    return imgRGB
+    new_img = img_reshape.dot(transform)
+    return new_img.reshape(s)
     pass
 
 
@@ -87,25 +81,28 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
 
 """ 4.4
     Equalizes the histogram of an image
-    param imgOrig: Original Histogram. grayscale or RGB image to be equalized having values in the range [0, 1].
+    param imgOrig: Original imag, grayscale or RGB image to be equalized having values in the range [0, 1].
     return: (imgEq,histOrg,histEQ)
 """
 def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray):
 
-    isRGB = bool(imgOrig.shape[-1] == 3)
+    isRGB = bool(imgOrig.shape[-1] == 3)  # check if the image is RGB image
     if(isRGB):
         imgYIQ = transformRGB2YIQ(imgOrig)
         imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
 
-    histOrg, bin_edges = np.histogram(imgOrig, bins=256, range=(0.0, 255.0), density=True)
-    cdf = histOrg.cumsum()  # cumulative distribution function
-    cdf = np.round(cdf*255 / cdf[-1])  # 255 is the max value we want to reach
+    histOrg, bin_edges = np.histogram(imgOrig, bins=np.arange(256), range=(0.0, 255.0), density=True)
+    cdf = np.cumsum(histOrg * np.diff(bin_edges))  # cumulative distribution function
+
+    print("hist: ", histOrg.size)
+    print("cdf: ", cdf.size)
+    print("bins: ", bin_edges.size)
 
     # mapping the pixels
     imgEq = np.zeros(imgOrig.shape)
-    ### g_min = cdf.min()
-    ### for pixel in histOrg:
-    ###   pixel = np.ceil(256 * )
+    all_pixels = imgOrig.shape[0] * imgOrig.shape[1]  # total number of pixels on image
+    for pixel in bin_edges:
+        imgEq[imgOrig == pixel] = (cdf[pixel] / all_pixels)*255  # 255 is the max value we want to reach
 
     histEQ, bin_edges2 = np.histogram(imgEq, bins=256, range=(0.0, 255.0), density=True)
 
