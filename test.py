@@ -10,7 +10,7 @@ def bgr_yiq_testMyself():
     imYIQ = skimage.color.rgb2yiq(beach_im)
     imRGB = skimage.color.yiq2rgb(imYIQ)
     #cv2.imwrite('rgb.jpg', imRGB)
-    plt.imshow(imRGB)
+    plt.imshow(imYIQ)
     plt.show()
     #imDisplay('rgb.jpg', 2)
 
@@ -21,10 +21,10 @@ def test_display():
 
 
 def test_RGB2YIQ():
-    #beach_im = imReadAndConvert("beach.jpg", 2)
-    beach_im = cv2.cvtColor(cv2.imread("beach.jpg"), cv2.COLOR_BGR2RGB)
+    beach_im = imReadAndConvert("beach.jpg", 2)
+    #beach_im = cv2.cvtColor(cv2.imread("beach.jpg"), cv2.COLOR_BGR2RGB)
     ans = transformRGB2YIQ(beach_im)
-    print("RBG->YIQ: {}".format(ans))
+    #print("RBG->YIQ: {}".format(ans))
     #cv2.imwrite('y_channel_only.jpg', ans[:, :, 0])
     plt.imshow(ans)
     plt.show()
@@ -33,13 +33,9 @@ def test_RGB2YIQ():
 
 
 def test_YIQ2RGB():
-    #beach_im = imReadAndConvert("beach.jpg", 2)
-    beach_im = cv2.cvtColor(cv2.imread("beach.jpg"), cv2.COLOR_BGR2RGB)
+    beach_im = imReadAndConvert("beach.jpg", 2)
     yiq = transformRGB2YIQ(beach_im)
     rgb = transformYIQ2RGB(yiq)
-    print("YIQ->RBG: {}".format(rgb))
-    #cv2.imwrite('samp_rgb.jpg', rgb)
-    #imDisplay('samp_rgb.jpg', 2)
     plt.imshow(rgb)
     plt.show()
 
@@ -57,10 +53,10 @@ def test_quant():
 def main():
     #test_display()
     #test_RGB2YIQ()
-    #test_YIQ2RGB()
+    test_YIQ2RGB()
     #bgr_yiq_testMyself()
     #test_hist()
-    test_quant()
+    #test_quant()
 
 
 if __name__ == '__main__':

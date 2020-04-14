@@ -57,13 +57,14 @@ def imDisplay(filename: str, representation: int):
     return: A YIQ in image color space
 """
 def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
-    s = imgRGB.shape
-    img_reshape = imgRGB.reshape((s[0] * s[1]), s[2])  # s[2] = 3
+    print(imgRGB)
     transform = np.array([[0.299, 0.587, 0.114],
                           [0.596, -0.275, -0.321],
                           [0.212, -0.523, 0.311]])
-    new_img = img_reshape.dot(transform)
-    return new_img.reshape(s)
+    for i in range(imgRGB.shape[0]):
+        for j in range(imgRGB.shape[1]):
+            imgRGB[i][j] = transform.dot(imgRGB[i][j])
+    return imgRGB
     pass
 
 
@@ -122,9 +123,7 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
 
     # find image's histogram (of probabilities)
-    #histOrg, bin_edges = np.histogram(imOrig, bins=256, range=(0.0, 255.0), density=True)
-    plt.hist(imOrig, bins=256, range=(0.0, 255.0), density=True)
-    plt.show()
+    histOrg, bin_edges = np.histogram(imOrig, bins=256, range=(0.0, 255.0), density=True)
 
     size = 255/nQuant  # The initial size given for each interval (fixed - equal division)
     z = np.zeros(nQuant+1)  # create an empty array representing the boundaries
@@ -132,6 +131,9 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
         z[i] = z[i-1] + size
     z[nQuant] = 255  # always start at 0 and ends at 255
     print(z)
+
+    # save min_MSE !
+    # and save the results [the total intensities error in a current iteration] for error output graph.
 
     q = np.zeros(nQuant)
     for i in range(nIter):
