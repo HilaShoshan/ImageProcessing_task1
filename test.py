@@ -41,8 +41,10 @@ def test_YIQ2RGB():
 
 
 def test_hist():
-    bac_con_im = imReadAndConvert("bac_con.png", 1)
-    imgEq, histOrg, histEQ = hsitogramEqualize(bac_con_im)
+    # bac_con_im = imReadAndConvert("bac_con.png", 1)
+    # imgEq, histOrg, histEQ = hsitogramEqualize(bac_con_im)
+    corona = imReadAndConvert("beach.jpg", 2)
+    imgEq, histOrg, histEQ = hsitogramEqualize(corona)
     plt.hist(histOrg)
     plt.show()
     plt.hist(histEQ)

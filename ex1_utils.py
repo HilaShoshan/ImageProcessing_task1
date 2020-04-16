@@ -88,9 +88,14 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
 """
 def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray):
 
+    # display the input image
+    plt.imshow(imgOrig)
+    plt.show()
+
     isRGB = bool(imgOrig.shape[-1] == 3)  # check if the image is RGB image
     if(isRGB):
         imgYIQ = transformRGB2YIQ(imgOrig)
+        yiq_img = imgOrig  # to use it later in displaying
         imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
 
     all_pixels = imgOrig.shape[0] * imgOrig.shape[1]  # total number of pixels on image
@@ -108,11 +113,15 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
     histEQ, bin_edges2 = np.histogram(imgEq, bins=256, range=(0.0, 255.0))
 
-    # display the input and the equalized output image
-    plt.imshow(imgOrig)
-    plt.show()
-    plt.imshow(imgEq)
-    plt.show()
+    # display the equalized output
+    if(isRGB):
+        yiq_img[:, :, 0] = imgOrig  # alter the y channel to the equalized one
+        rgb_img = transformYIQ2RGB(yiq_img)
+        plt.imshow(rgb_img)
+        plt.show()
+    else:
+        plt.imshow(imgEq)
+        plt.show()
 
     return imgEq, histOrg, histEQ
     pass
