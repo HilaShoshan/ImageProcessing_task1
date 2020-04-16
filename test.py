@@ -42,6 +42,9 @@ def test_YIQ2RGB():
 
 def test_hist():
     bac_con_im = imReadAndConvert("bac_con.png", 1)
+    #print(bac_con_im * 255)
+    img = cv2.imread("bac_con.png", cv2.IMREAD_GRAYSCALE)
+    #print(img)
     hsitogramEqualize(bac_con_im)
 
 

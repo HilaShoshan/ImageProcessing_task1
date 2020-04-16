@@ -19,12 +19,14 @@ def myID() -> np.int:
     return: The image object
 """
 def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
+
     if(representation == 1):  # Gray_Scale representation
         img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
     else:  # =2, RGB
         img = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
+
     # normalize
-    norm_img = cv2.normalize(img, None, 0, 1, cv2.NORM_MINMAX, cv2.CV_32F)
+    norm_img = img / 255.0
 
     print("type is: ", norm_img.dtype)
 
@@ -81,7 +83,7 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
 
 """ 4.4
     Equalizes the histogram of an image
-    param imgOrig: Original imag, grayscale or RGB image to be equalized having values in the range [0, 1].
+    param imgOrig: Original image, grayscale or RGB image to be equalized having values in the range [0, 1].
     return: (imgEq,histOrg,histEQ)
 """
 def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray):
@@ -91,18 +93,17 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
         imgYIQ = transformRGB2YIQ(imgOrig)
         imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
 
-    histOrg, bin_edges = np.histogram(imgOrig, bins=np.arange(256), range=(0.0, 255.0), density=True)
+    histOrg, bin_edges = np.histogram(imgOrig * 255, bins=np.arange(256), range=(0.0, 255.0), density=True)
     cdf = np.cumsum(histOrg * np.diff(bin_edges))  # cumulative distribution function
-
-    print("hist: ", histOrg.size)
-    print("cdf: ", cdf.size)
-    print("bins: ", bin_edges.size)
 
     # mapping the pixels
     imgEq = np.zeros(imgOrig.shape)
     all_pixels = imgOrig.shape[0] * imgOrig.shape[1]  # total number of pixels on image
-    for pixel in bin_edges:
-        imgEq[imgOrig == pixel] = (cdf[pixel] / all_pixels)*255  # 255 is the max value we want to reach
+    for pixel in range(255):
+        new_pixel = (cdf[pixel] / all_pixels)*255  # 255 is the max value we want to reach
+        new_pixel = np.ceil(new_pixel)  # ceiling of new_pixel (round up)
+        print(new_pixel)
+        imgEq[imgOrig == pixel/255.0] = new_pixel
 
     histEQ, bin_edges2 = np.histogram(imgEq, bins=256, range=(0.0, 255.0), density=True)
 
