@@ -45,10 +45,10 @@ def test_hist():
     # imgEq, histOrg, histEQ = hsitogramEqualize(bac_con_im)
     corona = imReadAndConvert("beach.jpg", 2)
     imgEq, histOrg, histEQ = hsitogramEqualize(corona)
-    plt.hist(histOrg)
+    plt.bar(np.arange(255), histOrg)
     plt.show()
-    plt.hist(histEQ)
-    plt.show()
+    # plt.bar(np.arange(255), histEQ)
+    # plt.show()
 
 
 def test_quant():
@@ -61,8 +61,8 @@ def main():
     #test_RGB2YIQ()
     #test_YIQ2RGB()
     #bgr_yiq_testMyself()
-    test_hist()
-    #test_quant()
+    #test_hist()
+    test_quant()
 
 
 if __name__ == '__main__':

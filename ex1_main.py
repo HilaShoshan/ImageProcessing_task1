@@ -1,5 +1,8 @@
 from ex1_utils import *
 from gamma import gammaDisplay
+import numpy as np
+import matplotlib.pyplot as plt
+import time
 
 
 def histEqDemo(img_path: str, rep: int):
@@ -10,8 +13,8 @@ def histEqDemo(img_path: str, rep: int):
     cumsum = np.cumsum(histOrg)
     cumsumEq = np.cumsum(histEq)
     plt.gray()
-    plt.plot(range(255), cumsum, 'r')
-    plt.plot(range(255), cumsumEq, 'g')
+    plt.plot(range(256), cumsum, 'r')
+    plt.plot(range(256), cumsumEq, 'g')
 
     # Display the images
     plt.figure()
@@ -44,7 +47,7 @@ def quantDemo(img_path: str, rep: int):
 
 def main():
     print("ID:", myID())
-    img_path = 'sample_image.jpg'
+    img_path = 'beach.jpg'
 
     # Basic read and display
     imDisplay(img_path, LOAD_GRAY_SCALE)

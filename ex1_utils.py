@@ -86,11 +86,28 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
     param imgOrig: Original image, grayscale or RGB image to be equalized having values in the range [0, 1].
     return: (imgEq,histOrg,histEQ)
 """
+
+"""
+def myCumSum(histOrg: np.ndarray) -> np.ndarray:
+    ans = np.zeros(histOrg.shape)
+    ans[0] = histOrg[0]
+    for i in range(1, histOrg.size):
+        ans[i] = ans[i - 1] + ans[i]
+    return ans
+    pass
+"""
+
+def show_img(img: np.ndarray):
+    plt.gray()  # in case of grayscale image
+    plt.imshow(img)
+    plt.show()
+    pass
+
+
 def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray):
 
     # display the input image
-    plt.imshow(imgOrig)
-    plt.show()
+    show_img(imgOrig)
 
     isRGB = bool(imgOrig.shape[-1] == 3)  # check if the image is RGB image
     if(isRGB):
@@ -100,9 +117,16 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
     all_pixels = imgOrig.shape[0] * imgOrig.shape[1]  # total number of pixels on image
 
+    # imgOrig = (np.around(imgOrig * 255)).astype(int)  # round & make sure all pixels are integers
     histOrg, bin_edges = np.histogram(imgOrig * 255, bins=np.arange(256), range=(0.0, 255.0))
     cumsum = np.cumsum(histOrg * np.diff(bin_edges))  # cumulative histogram
+    # cumsum = myCumSum(histOrg)
     cdf = cumsum / all_pixels  # normalize to get the cumulative distribution function
+
+    print("image after round:\n", imgOrig * 255)
+    print(all_pixels)
+    print("hist:\n", histOrg, "\n")
+    print("cumsum:\n", cumsum, "\n")
 
     # mapping the pixels
     imgEq = np.zeros(imgOrig.shape)
@@ -113,15 +137,15 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
     histEQ, bin_edges2 = np.histogram(imgEq, bins=256, range=(0.0, 255.0))
 
+    print(imgEq)
+
     # display the equalized output
     if(isRGB):
         yiq_img[:, :, 0] = imgOrig  # alter the y channel to the equalized one
         rgb_img = transformYIQ2RGB(yiq_img)
-        plt.imshow(rgb_img)
-        plt.show()
+        show_img(rgb_img)
     else:
-        plt.imshow(imgEq)
-        plt.show()
+        show_img(imgEq)
 
     return imgEq, histOrg, histEQ
     pass
@@ -129,28 +153,39 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
 """ 4.5
     Quantized an image in to **nQuant** colors
-    :param imOrig: The original image (RGB or Gray scale)
-    :param nQuant: Number of colors to quantize the image to
-    :param nIter: Number of optimization loops
-    :return: (List[qImage_i],List[error_i])
-    """
-def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
+    param imOrig: The original image (RGB or Gray scale)
+    param nQuant: Number of colors to quantize the image to
+    param nIter: Number of optimization loops
+    return: (List[qImage_i],List[error_i])
+"""
 
-    # find image's histogram (of probabilities)
-    histOrg, bin_edges = np.histogram(imOrig, bins=256, range=(0.0, 255.0), density=True)
-
-    size = 255/nQuant  # The initial size given for each interval (fixed - equal division)
-    z = np.zeros(nQuant+1)  # create an empty array representing the boundaries
+# function to initialized the boundaries
+def init_z(nQuant: int) -> np.ndarray:
+    size = 255 / nQuant  # The initial size given for each interval (fixed - equal division)
+    z = np.zeros(nQuant + 1)  # create an empty array representing the boundaries
     for i in range(1, nQuant):
-        z[i] = z[i-1] + size
+        z[i] = z[i - 1] + size
     z[nQuant] = 255  # always start at 0 and ends at 255
     print(z)
+    return z
+    pass
 
-    # save min_MSE !
-    # and save the results [the total intensities error in a current iteration] for error output graph.
 
-    q = np.zeros(nQuant)
+def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
+
+    if np.amax(imOrig) <= 1:  # so the picture is normalized
+        imOrig = imOrig * 255
+
+    # find image's histogram (of probabilities)
+    histOrg, bin_edges = np.histogram(imOrig, bins=256, range=(0.0, 255.0))
+
+    z = init_z(nQuant)  # boundaries
+    q = np.zeros(nQuant)  # the optimal values for each ‘cell’
+
+    print(histOrg)
+
     for i in range(nIter):
-        q[i] = 0  # formula from the class
+        for cell in range(len(q)):
+            q[cell] = np.average(histOrg)  # ? weighted avg ...
     pass
 
