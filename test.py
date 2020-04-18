@@ -53,7 +53,7 @@ def test_hist():
 
 def test_quant():
     bac_con_im = imReadAndConvert("bac_con.png", 1)
-    quantizeImage(bac_con_im, 4, 10)
+    quantizeImage(bac_con_im, 4, 1)
 
 
 def main():

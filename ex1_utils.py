@@ -104,16 +104,30 @@ def show_img(img: np.ndarray):
     pass
 
 
+""" (Auxiliary function for histogramEqualize and quantizeImage)
+    function that helps me to check if an image is RGB
+    if it is, it takes the Y channel as the new image (to work with)
+    also saves the original image in YIQ representation for later use
+    return: (isRGB, yiq_img, imgOrig)
+"""
+def case_RGB(imgOrig: np.ndarray) -> (bool, np.ndarray, np.ndarray):
+    isRGB = bool(imgOrig.shape[-1] == 3)  # check if the image is RGB image
+    if (isRGB):
+        imgYIQ = transformRGB2YIQ(imgOrig)
+        yiq_img = imgOrig  # to use it later in displaying
+        imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
+        return True, yiq_img, imgOrig
+    else:
+        return False, None, imgOrig
+    pass
+
+
 def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray):
 
     # display the input image
     show_img(imgOrig)
 
-    isRGB = bool(imgOrig.shape[-1] == 3)  # check if the image is RGB image
-    if(isRGB):
-        imgYIQ = transformRGB2YIQ(imgOrig)
-        yiq_img = imgOrig  # to use it later in displaying
-        imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
+    isRGB, yiq_img, imgOrig = case_RGB(imgOrig)
 
     all_pixels = imgOrig.shape[0] * imgOrig.shape[1]  # total number of pixels on image
 
@@ -161,8 +175,8 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
 # function to initialized the boundaries
 def init_z(nQuant: int) -> np.ndarray:
-    size = 255 / nQuant  # The initial size given for each interval (fixed - equal division)
-    z = np.zeros(nQuant + 1)  # create an empty array representing the boundaries
+    size = int(255 / nQuant)  # The initial size given for each interval (fixed - equal division)
+    z = np.zeros(nQuant + 1, dtype=int)  # create an empty array representing the boundaries
     for i in range(1, nQuant):
         z[i] = z[i - 1] + size
     z[nQuant] = 255  # always start at 0 and ends at 255
@@ -173,19 +187,44 @@ def init_z(nQuant: int) -> np.ndarray:
 
 def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
 
+    isRGB, yiq_img, imOrig = case_RGB(imOrig)
+
     if np.amax(imOrig) <= 1:  # so the picture is normalized
         imOrig = imOrig * 255
 
-    # find image's histogram (of probabilities)
+    # find image's histogram
     histOrg, bin_edges = np.histogram(imOrig, bins=256, range=(0.0, 255.0))
+
+    new_img = np.zeros(imOrig.shape)
 
     z = init_z(nQuant)  # boundaries
     q = np.zeros(nQuant)  # the optimal values for each ‘cell’
 
-    print(histOrg)
+    # saving the optimal parameters (the image to return in the end of the algorithm)
+    min_mse = np.inf
+    qImage = np.zeros(imOrig.shape)
+
+    # lists to return
+    qImage_list = list()
+    error_list = list()
 
     for i in range(nIter):
-        for cell in range(len(q)):
-            q[cell] = np.average(histOrg)  # ? weighted avg ...
+        for cell in range(len(q)):  # select the values that each of the segments’ intensities will map to
+            cell_range = np.arange(z[cell], z[cell+1])
+            q[cell] = np.average(cell_range, weights=histOrg[z[cell]:z[cell+1]])  # weighted average
+        for bound in range(1, len(z)-1):  # move each boundary to be in the middle of two means
+            z[bound] = (q[bound-1] + q[bound]) / 2
+            my_indxs = np.where(np.logical_and(imOrig >= z[bound-1], imOrig <= z[bound]))  # should return indexes array
+            if bound == 1: print(my_indxs)  # ?????
+            np.put(new_img, my_indxs, [q[bound-1]])  # alter the pixels in the new image
+            # new_img[my_range] = q[bound-1]
+        MSE = np.square(np.subtract(imOrig, new_img)).mean()
+        qImage_list.append(new_img)
+        error_list.append(MSE)
+        if MSE < min_mse:
+            min_mse = MSE  # update the minimum error
+            qImage = new_img
+
+    return qImage_list, error_list
     pass
 
