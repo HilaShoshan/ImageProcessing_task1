@@ -42,6 +42,7 @@ def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
 """
 def imDisplay(filename: str, representation: int):
     img = imReadAndConvert(filename, representation)
+    plt.gray()
     plt.imshow(img)
     plt.show()
     return None
@@ -122,6 +123,13 @@ def case_RGB(imgOrig: np.ndarray) -> (bool, np.ndarray, np.ndarray):
     pass
 
 
+def back_to_rgb(yiq_img: np.ndarray, y_to_update: np.ndarray) -> np.ndarray:
+    yiq_img[:, :, 0] = y_to_update  # alter the y channel to the new one
+    rgb_img = transformYIQ2RGB(yiq_img)
+    return rgb_img
+    pass
+
+
 def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray):
 
     # display the input image
@@ -148,6 +156,7 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
         new_pixel = cdf[pixel] * 255  # 255 is the max value we want to reach
         new_pixel = np.ceil(new_pixel)  # ceiling of new_pixel (round up)
         imgEq[imgOrig == pixel/255.0] = new_pixel
+        # np.put(imgEq, [my_indxs], [lut]) ???
 
     histEQ, bin_edges2 = np.histogram(imgEq, bins=256, range=(0.0, 255.0))
 
@@ -155,8 +164,7 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
     # display the equalized output
     if(isRGB):
-        yiq_img[:, :, 0] = imgOrig  # alter the y channel to the equalized one
-        rgb_img = transformYIQ2RGB(yiq_img)
+        rgb_img = back_to_rgb(yiq_img, imgOrig)
         show_img(rgb_img)
     else:
         show_img(imgEq)
@@ -172,6 +180,7 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
     param nIter: Number of optimization loops
     return: (List[qImage_i],List[error_i])
 """
+
 
 # function to initialized the boundaries
 def init_z(nQuant: int) -> np.ndarray:
@@ -200,9 +209,7 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
     z = init_z(nQuant)  # boundaries
     q = np.zeros(nQuant)  # the optimal values for each ‘cell’
 
-    # saving the optimal parameters (the image to return in the end of the algorithm)
-    min_mse = np.inf
-    qImage = np.zeros(imOrig.shape)
+    min_mse = np.inf  # saving the optimal (minimal) MSE
 
     # lists to return
     qImage_list = list()
@@ -214,17 +221,16 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
             q[cell] = np.average(cell_range, weights=histOrg[z[cell]:z[cell+1]])  # weighted average
         for bound in range(1, len(z)-1):  # move each boundary to be in the middle of two means
             z[bound] = (q[bound-1] + q[bound]) / 2
-            my_indxs = np.where(np.logical_and(imOrig >= z[bound-1], imOrig <= z[bound]))  # should return indexes array
-            if bound == 1: print(my_indxs)  # ?????
-            np.put(new_img, my_indxs, [q[bound-1]])  # alter the pixels in the new image
-            # new_img[my_range] = q[bound-1]
+            # alter the pixels in the new image
+            new_img[np.logical_and(imOrig >= z[bound-1], imOrig <= z[bound])] = q[bound-1]
         MSE = np.square(np.subtract(imOrig, new_img)).mean()
-        qImage_list.append(new_img)
-        error_list.append(MSE)
-        if MSE < min_mse:
+        if MSE < min_mse:  # We've found an image with lower MSE
             min_mse = MSE  # update the minimum error
-            qImage = new_img
-
+            error_list.append(MSE)
+            if isRGB:
+                new_img = back_to_rgb(yiq_img, new_img)  # save in new_img the image in RGB form
+            qImage_list.append(new_img)
+        plt.plot(error_list)
     return qImage_list, error_list
     pass
 

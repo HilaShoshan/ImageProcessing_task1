@@ -18,6 +18,7 @@ def bgr_yiq_testMyself():
 def test_display():
     imDisplay("bac_con.png", 1)
     imDisplay("beach.jpg", 2)
+    imDisplay("beach.jpg", 1)
 
 
 def test_RGB2YIQ():
@@ -52,8 +53,11 @@ def test_hist():
 
 
 def test_quant():
-    bac_con_im = imReadAndConvert("bac_con.png", 1)
-    quantizeImage(bac_con_im, 4, 1)
+    corona_gray = imReadAndConvert("beach.jpg", 1)
+    qImage_list, error_list = quantizeImage(corona_gray, 4, 10)
+    plt.gray()
+    plt.imshow(qImage_list[-1])
+    plt.show()
 
 
 def main():
