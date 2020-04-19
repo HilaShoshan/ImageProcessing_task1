@@ -53,8 +53,10 @@ def test_hist():
 
 
 def test_hist2():
-    corona = imReadAndConvert("beach.jpg", 1)
+    corona = imReadAndConvert("beach.jpg", 2)
     imgEq, histOrg, histEQ = hsitogramEqualize(corona)
+    #cv2.equalizeHist(corona)
+    """
     cdf = histOrg.cumsum()
     cdf_normalized = cdf * histOrg.max() / cdf.max()
     plt.plot(cdf_normalized, color='b')
@@ -62,6 +64,7 @@ def test_hist2():
     plt.xlim([0, 256])
     plt.legend(('cdf', 'histogram'), loc='upper left')
     plt.show()
+    """
 
 
 def test_quant():

@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+import skimage.color
 
 from typing import List
 
@@ -88,15 +89,6 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
     return: (imgEq,histOrg,histEQ)
 """
 
-"""
-def myCumSum(histOrg: np.ndarray) -> np.ndarray:
-    ans = np.zeros(histOrg.shape)
-    ans[0] = histOrg[0]
-    for i in range(1, histOrg.size):
-        ans[i] = ans[i - 1] + ans[i]
-    return ans
-    pass
-"""
 
 def show_img(img: np.ndarray):
     plt.gray()  # in case of grayscale image
@@ -114,7 +106,8 @@ def show_img(img: np.ndarray):
 def case_RGB(imgOrig: np.ndarray) -> (bool, np.ndarray, np.ndarray):
     isRGB = bool(imgOrig.shape[-1] == 3)  # check if the image is RGB image
     if (isRGB):
-        imgYIQ = transformRGB2YIQ(imgOrig)
+        #imgYIQ = transformRGB2YIQ(imgOrig)
+        imgYIQ = skimage.color.rgb2yiq(imgOrig)
         yiq_img = imgOrig  # to use it later in displaying
         imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
         return True, yiq_img, imgOrig
@@ -125,7 +118,8 @@ def case_RGB(imgOrig: np.ndarray) -> (bool, np.ndarray, np.ndarray):
 
 def back_to_rgb(yiq_img: np.ndarray, y_to_update: np.ndarray) -> np.ndarray:
     yiq_img[:, :, 0] = y_to_update  # alter the y channel to the new one
-    rgb_img = transformYIQ2RGB(yiq_img)
+    #rgb_img = transformYIQ2RGB(yiq_img)
+    rgb_img = skimage.color.yiq2rgb(yiq_img)
     return rgb_img
     pass
 
@@ -134,31 +128,26 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
     # display the input image
     show_img(imgOrig)
+    imgOrig = imgOrig * 255
 
     isRGB, yiq_img, imgOrig = case_RGB(imgOrig)
+    imgOrig = (np.around(imgOrig)).astype('uint8')  # round & make sure all pixels are integers
 
     all_pixels = imgOrig.shape[0] * imgOrig.shape[1]  # total number of pixels on image
 
-    histOrg, bin_edges = np.histogram((imgOrig*255).flatten(), 256, [0, 256])
-    cumsum = histOrg.cumsum()  # cumulative histogram
-    cdf = cumsum * histOrg.max() / cumsum.max()  # normalize to get the cumulative distribution function
-
-    print(cumsum.max(), all_pixels)
+    histOrg, bin_edges = np.histogram(imgOrig.flatten(), 256, [0, 256])
+    cdf = np.cumsum(histOrg * np.diff(bin_edges))  # cumulative histogram
+    #cdf = cumsum * histOrg.max() / cumsum.max()  # normalize to get the cumulative distribution function
 
     cdf_m = np.ma.masked_equal(cdf, 0)
     cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())  # 255 is the max value we want to reach
     cdf = np.ma.filled(cdf_m, 0).astype('uint8')  # make sure all pixels are integers
 
-    print(imgOrig)
-
-    # mapping the pixels
-    imgEq = np.zeros(imgOrig.shape)
-    for pixel in range(255):
-        new_pixel = cdf[pixel]
-        imgEq[imgOrig == pixel/255.0] = new_pixel
+    imgEq = cdf[imgOrig]
 
     histEQ, bin_edges2 = np.histogram(imgEq.flatten(), 256, [0, 256])
 
+    print(imgOrig)
     print(imgEq)
 
     # display the equalized output
