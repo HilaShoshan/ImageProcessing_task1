@@ -52,6 +52,18 @@ def test_hist():
     # plt.show()
 
 
+def test_hist2():
+    corona = imReadAndConvert("beach.jpg", 1)
+    imgEq, histOrg, histEQ = hsitogramEqualize(corona)
+    cdf = histOrg.cumsum()
+    cdf_normalized = cdf * histOrg.max() / cdf.max()
+    plt.plot(cdf_normalized, color='b')
+    plt.hist(corona.flatten(), 256, [0, 256], color='r')
+    plt.xlim([0, 256])
+    plt.legend(('cdf', 'histogram'), loc='upper left')
+    plt.show()
+
+
 def test_quant():
     corona_gray = imReadAndConvert("beach.jpg", 1)
     qImage_list, error_list = quantizeImage(corona_gray, 4, 10)
@@ -66,7 +78,8 @@ def main():
     #test_YIQ2RGB()
     #bgr_yiq_testMyself()
     #test_hist()
-    test_quant()
+    test_hist2()
+    #test_quant()
 
 
 if __name__ == '__main__':

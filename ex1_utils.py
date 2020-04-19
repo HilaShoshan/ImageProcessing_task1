@@ -139,26 +139,25 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
     all_pixels = imgOrig.shape[0] * imgOrig.shape[1]  # total number of pixels on image
 
-    # imgOrig = (np.around(imgOrig * 255)).astype(int)  # round & make sure all pixels are integers
-    histOrg, bin_edges = np.histogram(imgOrig * 255, bins=np.arange(256), range=(0.0, 255.0))
-    cumsum = np.cumsum(histOrg * np.diff(bin_edges))  # cumulative histogram
-    # cumsum = myCumSum(histOrg)
-    cdf = cumsum / all_pixels  # normalize to get the cumulative distribution function
+    histOrg, bin_edges = np.histogram((imgOrig*255).flatten(), 256, [0, 256])
+    cumsum = histOrg.cumsum()  # cumulative histogram
+    cdf = cumsum * histOrg.max() / cumsum.max()  # normalize to get the cumulative distribution function
 
-    print("image after round:\n", imgOrig * 255)
-    print(all_pixels)
-    print("hist:\n", histOrg, "\n")
-    print("cumsum:\n", cumsum, "\n")
+    print(cumsum.max(), all_pixels)
+
+    cdf_m = np.ma.masked_equal(cdf, 0)
+    cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())  # 255 is the max value we want to reach
+    cdf = np.ma.filled(cdf_m, 0).astype('uint8')  # make sure all pixels are integers
+
+    print(imgOrig)
 
     # mapping the pixels
     imgEq = np.zeros(imgOrig.shape)
     for pixel in range(255):
-        new_pixel = cdf[pixel] * 255  # 255 is the max value we want to reach
-        new_pixel = np.ceil(new_pixel)  # ceiling of new_pixel (round up)
+        new_pixel = cdf[pixel]
         imgEq[imgOrig == pixel/255.0] = new_pixel
-        # np.put(imgEq, [my_indxs], [lut]) ???
 
-    histEQ, bin_edges2 = np.histogram(imgEq, bins=256, range=(0.0, 255.0))
+    histEQ, bin_edges2 = np.histogram(imgEq.flatten(), 256, [0, 256])
 
     print(imgEq)
 
