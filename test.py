@@ -55,7 +55,20 @@ def test_hist():
 def test_hist2():
     corona = imReadAndConvert("beach.jpg", 2)
     imgEq, histOrg, histEQ = hsitogramEqualize(corona)
-    #cv2.equalizeHist(corona)
+    """
+    img_yiq = skimage.color.rgb2yiq(corona)
+    img_yiq[:, :, 0] = cv2.equalizeHist(img_yiq[:, :, 0])
+    rgb_img = skimage.color.yiq2rgb(img_yiq)
+    cv2.imshow('Color input image', corona)
+    cv2.imshow('Histogram equalized', rgb_img)
+    """
+
+def test_hist3():
+    corona = imReadAndConvert("beach.jpg", 2)
+    img = histogram_equalization(corona)
+    plt.imshow(img)
+    plt.show()
+
     """
     cdf = histOrg.cumsum()
     cdf_normalized = cdf * histOrg.max() / cdf.max()

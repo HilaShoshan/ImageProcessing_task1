@@ -83,13 +83,6 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
     pass
 
 
-""" 4.4
-    Equalizes the histogram of an image
-    param imgOrig: Original image, grayscale or RGB image to be equalized having values in the range [0, 1].
-    return: (imgEq,histOrg,histEQ)
-"""
-
-
 def show_img(img: np.ndarray):
     plt.gray()  # in case of grayscale image
     plt.imshow(img)
@@ -106,38 +99,42 @@ def show_img(img: np.ndarray):
 def case_RGB(imgOrig: np.ndarray) -> (bool, np.ndarray, np.ndarray):
     isRGB = bool(imgOrig.shape[-1] == 3)  # check if the image is RGB image
     if (isRGB):
-        #imgYIQ = transformRGB2YIQ(imgOrig)
-        imgYIQ = skimage.color.rgb2yiq(imgOrig)
-        yiq_img = imgOrig  # to use it later in displaying
+        imgYIQ = transformRGB2YIQ(imgOrig)
+        #imgYIQ = skimage.color.rgb2yiq(imgOrig)
         imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
-        return True, yiq_img, imgOrig
+        return True, imgYIQ, imgOrig
     else:
         return False, None, imgOrig
     pass
 
 
 def back_to_rgb(yiq_img: np.ndarray, y_to_update: np.ndarray) -> np.ndarray:
-    yiq_img[:, :, 0] = y_to_update  # alter the y channel to the new one
-    #rgb_img = transformYIQ2RGB(yiq_img)
-    rgb_img = skimage.color.yiq2rgb(yiq_img)
+    #y, i, q = cv2.split(yiq_img)
+    #new_img = cv2.merge((y_to_update, i, q))  # alter the y channel to the new one
+    yiq_img[:, :, 0] = y_to_update
+    rgb_img = transformYIQ2RGB(yiq_img)
+    #rgb_img = skimage.color.yiq2rgb(yiq_img)
     return rgb_img
     pass
 
 
+""" 4.4
+    Equalizes the histogram of an image
+    param imgOrig: Original image, grayscale or RGB image to be equalized having values in the range [0, 1].
+    return: (imgEq,histOrg,histEQ)
+"""
 def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray):
 
     # display the input image
     show_img(imgOrig)
-    imgOrig = imgOrig * 255
 
     isRGB, yiq_img, imgOrig = case_RGB(imgOrig)
+    imgOrig = imgOrig * 255
     imgOrig = (np.around(imgOrig)).astype('uint8')  # round & make sure all pixels are integers
 
-    all_pixels = imgOrig.shape[0] * imgOrig.shape[1]  # total number of pixels on image
-
     histOrg, bin_edges = np.histogram(imgOrig.flatten(), 256, [0, 256])
-    cdf = np.cumsum(histOrg * np.diff(bin_edges))  # cumulative histogram
-    #cdf = cumsum * histOrg.max() / cumsum.max()  # normalize to get the cumulative distribution function
+    cumsum = np.cumsum(histOrg * np.diff(bin_edges))  # cumulative histogram
+    cdf = cumsum * histOrg.max() / cumsum.max()  # normalize to get the cumulative distribution function
 
     cdf_m = np.ma.masked_equal(cdf, 0)
     cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())  # 255 is the max value we want to reach
@@ -147,17 +144,57 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
 
     histEQ, bin_edges2 = np.histogram(imgEq.flatten(), 256, [0, 256])
 
-    print(imgOrig)
-    print(imgEq)
-
     # display the equalized output
     if(isRGB):
-        rgb_img = back_to_rgb(yiq_img, imgOrig)
+        imgEq = (imgEq/255).astype('float64')
+        print(imgEq)
+        rgb_img = back_to_rgb(yiq_img, imgEq)
         show_img(rgb_img)
     else:
         show_img(imgEq)
 
     return imgEq, histOrg, histEQ
+    pass
+
+
+def histogram_equalization(img_in):
+    # segregate color streams
+    b, g, r = cv2.split(img_in)
+    h_b, bin_b = np.histogram(b.flatten(), 256, [0, 256])
+    h_g, bin_g = np.histogram(g.flatten(), 256, [0, 256])
+    h_r, bin_r = np.histogram(r.flatten(), 256, [0, 256])
+    # calculate cdf
+    cdf_b = np.cumsum(h_b)
+    cdf_g = np.cumsum(h_g)
+    cdf_r = np.cumsum(h_r)
+
+    # mask all pixels with value=0 and replace it with mean of the pixel values
+    cdf_m_b = np.ma.masked_equal(cdf_b, 0)
+    cdf_m_b = (cdf_m_b - cdf_m_b.min()) * 255 / (cdf_m_b.max() - cdf_m_b.min())
+    cdf_final_b = np.ma.filled(cdf_m_b, 0).astype('uint8')
+
+    cdf_m_g = np.ma.masked_equal(cdf_g, 0)
+    cdf_m_g = (cdf_m_g - cdf_m_g.min()) * 255 / (cdf_m_g.max() - cdf_m_g.min())
+    cdf_final_g = np.ma.filled(cdf_m_g, 0).astype('uint8')
+
+
+    cdf_m_r = np.ma.masked_equal(cdf_r, 0)
+    cdf_m_r = (cdf_m_r - cdf_m_r.min()) * 255 / (cdf_m_r.max() - cdf_m_r.min())
+    cdf_final_r = np.ma.filled(cdf_m_r, 0).astype('uint8')
+    # merge the images in the three channels
+    img_b = cdf_final_b[b]
+    img_g = cdf_final_g[g]
+    img_r = cdf_final_r[r]
+
+    img_out = cv2.merge((img_b, img_g, img_r))
+    # validation
+    equ_b = cv2.equalizeHist(b)
+    equ_g = cv2.equalizeHist(g)
+    equ_r = cv2.equalizeHist(r)
+    equ = cv2.merge((equ_b, equ_g, equ_r))
+    # print(equ)
+    # cv2.imwrite('output_name.png', equ)
+    return img_out
     pass
 
 
