@@ -53,7 +53,7 @@ def test_hist():
 
 
 def test_hist2():
-    corona = imReadAndConvert("beach.jpg", 2)
+    corona = imReadAndConvert("beach.jpg", 1)
     imgEq, histOrg, histEQ = hsitogramEqualize(corona)
     """
     img_yiq = skimage.color.rgb2yiq(corona)
@@ -65,9 +65,7 @@ def test_hist2():
 
 def test_hist3():
     corona = imReadAndConvert("beach.jpg", 2)
-    img = histogram_equalization(corona)
-    plt.imshow(img)
-    plt.show()
+    imgEq, histOrg, histEQ = histogram_equalization(corona)
 
     """
     cdf = histOrg.cumsum()
@@ -81,17 +79,15 @@ def test_hist3():
 
 
 def test_quant():
-    corona_gray = imReadAndConvert("beach.jpg", 1)
-    qImage_list, error_list = quantizeImage(corona_gray, 4, 10)
-    plt.gray()
-    plt.imshow(qImage_list[-1])
-    plt.show()
+    corona_gray = imReadAndConvert("beach.jpg", 2)
+    qImage_list, error_list = quantizeImage(corona_gray, 4, 30)
+    show_img(qImage_list[-1])
 
 
 def main():
     #test_display()
-    #test_RGB2YIQ()
-    #test_YIQ2RGB()
+    test_RGB2YIQ()
+    test_YIQ2RGB()
     #bgr_yiq_testMyself()
     #test_hist()
     test_hist2()

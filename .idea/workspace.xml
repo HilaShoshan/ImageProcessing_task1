@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b157d27b-f68e-4572-aca9-f78a3eafc839" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ex1_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/ex1_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
@@ -14,29 +13,30 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/task1$main_sol.coverage" NAME="main_sol Coverage Results" MODIFIED="1586334775037" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../תרגול 1" />
-    <SUITE FILE_PATH="coverage/task1$test.coverage" NAME="test Coverage Results" MODIFIED="1587409345201" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/task1$ex1_main.coverage" NAME="ex1_main Coverage Results" MODIFIED="1587413074836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/task1$test.coverage" NAME="test Coverage Results" MODIFIED="1587504050066" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/ex1_utils.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="271">
-              <caret line="149" column="20" lean-forward="true" selection-start-line="149" selection-start-column="20" selection-end-line="149" selection-end-column="20" />
+            <state relative-caret-position="294">
+              <caret line="88" column="4" selection-start-line="88" selection-start-column="4" selection-end-line="88" selection-end-column="4" />
               <folding>
-                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#0#23#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/ex1_utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-450">
-              <caret line="55" column="44" selection-start-line="55" selection-start-column="44" selection-end-line="55" selection-end-column="44" />
+            <state relative-caret-position="298">
+              <caret line="218" column="8" lean-forward="true" selection-start-line="218" selection-start-column="8" selection-end-line="218" selection-end-column="8" />
               <folding>
-                <element signature="e#0#23#0" expanded="true" />
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -58,14 +58,14 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/meitar.py" />
-        <option value="$PROJECT_DIR$/ex1_utils.py" />
         <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/ex1_utils.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="505" />
-    <option name="y" value="421" />
+    <option name="x" value="571" />
+    <option name="y" value="149" />
     <option name="width" value="805" />
     <option name="height" value="435" />
   </component>
@@ -110,6 +110,28 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.test">
+    <configuration name="ex1_main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="task1" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ex1_main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main_sol" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="task1" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -157,6 +179,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.ex1_main" />
         <item itemvalue="Python.main_sol" />
       </list>
     </recent_temporary>
@@ -184,12 +207,12 @@
       <workItem from="1587292873586" duration="13315000" />
       <workItem from="1587333086731" duration="499000" />
       <workItem from="1587375281119" duration="1102000" />
-      <workItem from="1587396361811" duration="7469000" />
+      <workItem from="1587396361811" duration="19408000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="147867000" />
+    <option name="totallyTimeSpent" value="159806000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -204,12 +227,12 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.11270802" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15355521" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.2405892" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.2700491" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39934534" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -218,12 +241,12 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3289689" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.18821605" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.18821605" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.19312602" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info active="true" anchor="right" id="SciView" order="3" visible="true" weight="0.3161876" />
+      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.42965204" />
       <window_info anchor="right" id="Database" order="4" />
     </layout>
     <layout-to-restore>
@@ -282,7 +305,7 @@
     <entry file="file://$PROJECT_DIR$/meitar.py" />
     <entry file="file://$PROJECT_DIR$/ex1_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
+        <state relative-caret-position="-690">
           <caret line="16" column="39" selection-start-line="16" selection-start-column="39" selection-end-line="16" selection-end-column="39" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
@@ -290,10 +313,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/python_stubs/1248692324/numpy/core/_multiarray_umath.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="359">
+          <caret line="10469" column="8" selection-start-line="10469" selection-start-column="8" selection-end-line="10469" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm2018.3/system/python_stubs/1248692324/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="5484" column="8" selection-start-line="5484" selection-start-column="8" selection-end-line="5484" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-450">
-          <caret line="55" column="44" selection-start-line="55" selection-start-column="44" selection-end-line="55" selection-end-column="44" />
+        <state relative-caret-position="294">
+          <caret line="88" column="4" selection-start-line="88" selection-start-column="4" selection-end-line="88" selection-end-column="4" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -302,8 +339,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ex1_utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
-          <caret line="149" column="20" lean-forward="true" selection-start-line="149" selection-start-column="20" selection-end-line="149" selection-end-column="20" />
+        <state relative-caret-position="298">
+          <caret line="218" column="8" lean-forward="true" selection-start-line="218" selection-start-column="8" selection-end-line="218" selection-end-column="8" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

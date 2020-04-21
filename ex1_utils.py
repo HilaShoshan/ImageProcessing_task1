@@ -56,13 +56,11 @@ def imDisplay(filename: str, representation: int):
     return: A YIQ in image color space
 """
 def transformRGB2YIQ(imgRGB: np.ndarray) -> np.ndarray:
-    s = imgRGB.shape
-    img_reshape = imgRGB.reshape((s[0] * s[1]), s[2])  # s[2] = 3
     transform = np.array([[0.299, 0.587, 0.114],
                           [0.596, -0.275, -0.321],
                           [0.212, -0.523, 0.311]])
-    new_img = img_reshape.dot(transform)
-    return new_img.reshape(s)
+    new_img = np.dot(imgRGB, transform.T.copy())
+    return new_img
     pass
 
 
@@ -76,10 +74,8 @@ def transformYIQ2RGB(imgYIQ: np.ndarray) -> np.ndarray:
                           [0.596, -0.275, -0.321],
                           [0.212, -0.523, 0.311]])
     mat = np.linalg.inv(transform)
-    s = imgYIQ.shape
-    img_reshape = imgYIQ.reshape((s[0] * s[1]), s[2])
-    new_img = img_reshape.dot(mat)
-    return new_img.reshape(s)
+    new_img = np.dot(imgYIQ, mat.T.copy())
+    return new_img
     pass
 
 
@@ -113,7 +109,6 @@ def back_to_rgb(yiq_img: np.ndarray, y_to_update: np.ndarray) -> np.ndarray:
     #new_img = cv2.merge((y_to_update, i, q))  # alter the y channel to the new one
     yiq_img[:, :, 0] = y_to_update
     rgb_img = transformYIQ2RGB(yiq_img)
-    #rgb_img = skimage.color.yiq2rgb(yiq_img)
     return rgb_img
     pass
 
@@ -129,72 +124,34 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
     show_img(imgOrig)
 
     isRGB, yiq_img, imgOrig = case_RGB(imgOrig)
-    imgOrig = imgOrig * 255
+    imgOrig = imgOrig * 255  # - imgOrig.min()
     imgOrig = (np.around(imgOrig)).astype('uint8')  # round & make sure all pixels are integers
 
-    histOrg, bin_edges = np.histogram(imgOrig.flatten(), 256, [0, 256])
-    cumsum = np.cumsum(histOrg * np.diff(bin_edges))  # cumulative histogram
-    cdf = cumsum * histOrg.max() / cumsum.max()  # normalize to get the cumulative distribution function
+    histOrg, bin_edges = np.histogram(imgOrig.flatten(), 256, [0, 255])
+    cumsum = histOrg.cumsum()  # cumulative histogram
+    # cdf = cumsum * histOrg.max() / cumsum.max()  # normalize to get the cumulative distribution function
 
-    cdf_m = np.ma.masked_equal(cdf, 0)
+    cdf_m = np.ma.masked_equal(cumsum, 0)
     cdf_m = (cdf_m - cdf_m.min()) * 255 / (cdf_m.max() - cdf_m.min())  # 255 is the max value we want to reach
     cdf = np.ma.filled(cdf_m, 0).astype('uint8')  # make sure all pixels are integers
 
-    imgEq = cdf[imgOrig]
-
-    histEQ, bin_edges2 = np.histogram(imgEq.flatten(), 256, [0, 256])
+    # mapping the pixels
 
     # display the equalized output
     if(isRGB):
-        imgEq = (imgEq/255).astype('float64')
-        print(imgEq)
-        rgb_img = back_to_rgb(yiq_img, imgEq)
-        show_img(rgb_img)
+        imgOrig = cdf[imgOrig.astype('uint8')]
+        histEQ, bin_edges2 = np.histogram(imgOrig.flatten(), 256, [0, 256])
+        imgOrig = (imgOrig/255)  # .astype('float64')
+        # imgEq = back_to_rgb(yiq_img, imgEq)
+        yiq_img[:, :, 0] = imgOrig
+        imgEq = transformYIQ2RGB(yiq_img)
+        show_img(imgEq)
     else:
+        imgEq = cdf[imgOrig.astype('uint8')]
+        histEQ, bin_edges2 = np.histogram(imgEq.flatten(), 256, [0, 256])
         show_img(imgEq)
 
     return imgEq, histOrg, histEQ
-    pass
-
-
-def histogram_equalization(img_in):
-    # segregate color streams
-    b, g, r = cv2.split(img_in)
-    h_b, bin_b = np.histogram(b.flatten(), 256, [0, 256])
-    h_g, bin_g = np.histogram(g.flatten(), 256, [0, 256])
-    h_r, bin_r = np.histogram(r.flatten(), 256, [0, 256])
-    # calculate cdf
-    cdf_b = np.cumsum(h_b)
-    cdf_g = np.cumsum(h_g)
-    cdf_r = np.cumsum(h_r)
-
-    # mask all pixels with value=0 and replace it with mean of the pixel values
-    cdf_m_b = np.ma.masked_equal(cdf_b, 0)
-    cdf_m_b = (cdf_m_b - cdf_m_b.min()) * 255 / (cdf_m_b.max() - cdf_m_b.min())
-    cdf_final_b = np.ma.filled(cdf_m_b, 0).astype('uint8')
-
-    cdf_m_g = np.ma.masked_equal(cdf_g, 0)
-    cdf_m_g = (cdf_m_g - cdf_m_g.min()) * 255 / (cdf_m_g.max() - cdf_m_g.min())
-    cdf_final_g = np.ma.filled(cdf_m_g, 0).astype('uint8')
-
-
-    cdf_m_r = np.ma.masked_equal(cdf_r, 0)
-    cdf_m_r = (cdf_m_r - cdf_m_r.min()) * 255 / (cdf_m_r.max() - cdf_m_r.min())
-    cdf_final_r = np.ma.filled(cdf_m_r, 0).astype('uint8')
-    # merge the images in the three channels
-    img_b = cdf_final_b[b]
-    img_g = cdf_final_g[g]
-    img_r = cdf_final_r[r]
-
-    img_out = cv2.merge((img_b, img_g, img_r))
-    # validation
-    equ_b = cv2.equalizeHist(b)
-    equ_g = cv2.equalizeHist(g)
-    equ_r = cv2.equalizeHist(r)
-    equ = cv2.merge((equ_b, equ_g, equ_r))
-    # print(equ)
-    # cv2.imwrite('output_name.png', equ)
-    return img_out
     pass
 
 
@@ -255,7 +212,9 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
             if isRGB:
                 new_img = back_to_rgb(yiq_img, new_img)  # save in new_img the image in RGB form
             qImage_list.append(new_img)
-        plt.plot(error_list)
+
+    plt.plot(error_list)
+    plt.show()
     return qImage_list, error_list
     pass
 
