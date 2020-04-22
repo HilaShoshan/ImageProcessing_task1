@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-import skimage.color
 
 from typing import List
 
@@ -21,7 +20,7 @@ def myID() -> np.int:
 """
 def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
 
-    if(representation == 1):  # Gray_Scale representation
+    if representation == 1:  # Gray_Scale representation
         img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
     else:  # =2, RGB
         img = cv2.cvtColor(cv2.imread(filename), cv2.COLOR_BGR2RGB)
@@ -96,7 +95,6 @@ def case_RGB(imgOrig: np.ndarray) -> (bool, np.ndarray, np.ndarray):
     isRGB = bool(imgOrig.shape[-1] == 3)  # check if the image is RGB image
     if (isRGB):
         imgYIQ = transformRGB2YIQ(imgOrig)
-        #imgYIQ = skimage.color.rgb2yiq(imgOrig)
         imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
         return True, imgYIQ, imgOrig
     else:
@@ -105,8 +103,6 @@ def case_RGB(imgOrig: np.ndarray) -> (bool, np.ndarray, np.ndarray):
 
 
 def back_to_rgb(yiq_img: np.ndarray, y_to_update: np.ndarray) -> np.ndarray:
-    #y, i, q = cv2.split(yiq_img)
-    #new_img = cv2.merge((y_to_update, i, q))  # alter the y channel to the new one
     yiq_img[:, :, 0] = y_to_update
     rgb_img = transformYIQ2RGB(yiq_img)
     return rgb_img
@@ -124,7 +120,7 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
     show_img(imgOrig)
 
     isRGB, yiq_img, imgOrig = case_RGB(imgOrig)
-    imgOrig = imgOrig * 255  # - imgOrig.min()
+    imgOrig = imgOrig * 255
     imgOrig = (np.around(imgOrig)).astype('uint8')  # round & make sure all pixels are integers
 
     histOrg, bin_edges = np.histogram(imgOrig.flatten(), 256, [0, 255])
@@ -136,19 +132,15 @@ def hsitogramEqualize(imgOrig: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarra
     cdf = np.ma.filled(cdf_m, 0).astype('uint8')  # make sure all pixels are integers
 
     # mapping the pixels
+    imgEq = cdf[imgOrig.astype('uint8')]
+    histEQ, bin_edges2 = np.histogram(imgEq.flatten(), 256, [0, 256])
 
     # display the equalized output
     if(isRGB):
-        imgOrig = cdf[imgOrig.astype('uint8')]
-        histEQ, bin_edges2 = np.histogram(imgOrig.flatten(), 256, [0, 256])
-        imgOrig = (imgOrig/255)  # .astype('float64')
-        # imgEq = back_to_rgb(yiq_img, imgEq)
-        yiq_img[:, :, 0] = imgOrig
-        imgEq = transformYIQ2RGB(yiq_img)
+        imgEq = (imgEq / 255)
+        imgEq = back_to_rgb(yiq_img, imgEq)
         show_img(imgEq)
     else:
-        imgEq = cdf[imgOrig.astype('uint8')]
-        histEQ, bin_edges2 = np.histogram(imgEq.flatten(), 256, [0, 256])
         show_img(imgEq)
 
     return imgEq, histOrg, histEQ
@@ -171,7 +163,6 @@ def init_z(nQuant: int) -> np.ndarray:
     for i in range(1, nQuant):
         z[i] = z[i - 1] + size
     z[nQuant] = 255  # always start at 0 and ends at 255
-    print(z)
     return z
     pass
 
@@ -184,7 +175,7 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
         imOrig = imOrig * 255
 
     # find image's histogram
-    histOrg, bin_edges = np.histogram(imOrig, bins=256, range=(0.0, 255.0))
+    histOrg, bin_edges = np.histogram(imOrig, 256, [0, 255])
 
     new_img = np.zeros(imOrig.shape)
 
@@ -201,10 +192,15 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
         for cell in range(len(q)):  # select the values that each of the segments’ intensities will map to
             cell_range = np.arange(z[cell], z[cell+1])
             q[cell] = np.average(cell_range, weights=histOrg[z[cell]:z[cell+1]])  # weighted average
+
         for bound in range(1, len(z)-1):  # move each boundary to be in the middle of two means
             z[bound] = (q[bound-1] + q[bound]) / 2
             # alter the pixels in the new image
-            new_img[np.logical_and(imOrig >= z[bound-1], imOrig <= z[bound])] = q[bound-1]
+            # new_img[np.logical_and(imOrig >= z[bound-1], imOrig <= z[bound])] = q[bound-1]
+            print(z[bound])
+            the_range = np.arange(z[bound-1], z[bound]+1)
+            print(the_range, "\n")
+            np.put(new_img, the_range, q[bound-1])
         MSE = np.square(np.subtract(imOrig, new_img)).mean()
         if MSE < min_mse:  # We've found an image with lower MSE
             min_mse = MSE  # update the minimum error

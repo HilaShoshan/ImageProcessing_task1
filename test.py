@@ -55,43 +55,22 @@ def test_hist():
 def test_hist2():
     corona = imReadAndConvert("beach.jpg", 1)
     imgEq, histOrg, histEQ = hsitogramEqualize(corona)
-    """
-    img_yiq = skimage.color.rgb2yiq(corona)
-    img_yiq[:, :, 0] = cv2.equalizeHist(img_yiq[:, :, 0])
-    rgb_img = skimage.color.yiq2rgb(img_yiq)
-    cv2.imshow('Color input image', corona)
-    cv2.imshow('Histogram equalized', rgb_img)
-    """
-
-def test_hist3():
-    corona = imReadAndConvert("beach.jpg", 2)
-    imgEq, histOrg, histEQ = histogram_equalization(corona)
-
-    """
-    cdf = histOrg.cumsum()
-    cdf_normalized = cdf * histOrg.max() / cdf.max()
-    plt.plot(cdf_normalized, color='b')
-    plt.hist(corona.flatten(), 256, [0, 256], color='r')
-    plt.xlim([0, 256])
-    plt.legend(('cdf', 'histogram'), loc='upper left')
-    plt.show()
-    """
 
 
 def test_quant():
     corona_gray = imReadAndConvert("beach.jpg", 2)
-    qImage_list, error_list = quantizeImage(corona_gray, 4, 30)
+    qImage_list, error_list = quantizeImage(corona_gray, 4, 1)
     show_img(qImage_list[-1])
 
 
 def main():
     #test_display()
-    test_RGB2YIQ()
-    test_YIQ2RGB()
+    #test_RGB2YIQ()
+    #test_YIQ2RGB()
     #bgr_yiq_testMyself()
     #test_hist()
-    test_hist2()
-    #test_quant()
+    #test_hist2()
+    test_quant()
 
 
 if __name__ == '__main__':
