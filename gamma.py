@@ -13,8 +13,6 @@ from ex1_utils import LOAD_GRAY_SCALE
 import cv2
 import numpy as np
 
-image = None
-
 
 """ 4.6
     GUI for gamma correction
@@ -42,7 +40,7 @@ def gammaDisplay(img_path: str, rep: int):
     # cv2.resizeWindow("Gamma display", 700, 500)
     while True:
         pos = cv2.getTrackbarPos("Gamma*100", "Gamma display")
-        pos = pos / 200
+        pos = pos / 100
         new_img = gammaCorrection(img / 255.0, pos)
         cv2.imshow("Gamma display", new_img)
         key = cv2.waitKey(1000)  # Wait until user press some key
