@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b157d27b-f68e-4572-aca9-f78a3eafc839" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gamma.py" beforeDir="false" afterPath="$PROJECT_DIR$/gamma.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,7 +12,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/task1$main_sol.coverage" NAME="main_sol Coverage Results" MODIFIED="1586334775037" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../תרגול 1" />
-    <SUITE FILE_PATH="coverage/task1$gamma.coverage" NAME="gamma Coverage Results" MODIFIED="1587650635941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/task1$gamma.coverage" NAME="gamma Coverage Results" MODIFIED="1587653625026" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/task1$ex1_main.coverage" NAME="ex1_main Coverage Results" MODIFIED="1587413074836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/task1$test.coverage" NAME="test Coverage Results" MODIFIED="1587554743939" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
@@ -48,8 +47,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gamma.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="97">
-              <caret line="59" column="4" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="4" />
+            <state relative-caret-position="298">
+              <caret line="62" column="6" selection-start-line="62" selection-start-column="6" selection-end-line="62" selection-end-column="6" />
               <folding>
                 <element signature="e#320#357#0" expanded="true" />
               </folding>
@@ -248,12 +247,12 @@
       <workItem from="1587375281119" duration="1102000" />
       <workItem from="1587396361811" duration="19484000" />
       <workItem from="1587538788293" duration="21207000" />
-      <workItem from="1587635427580" duration="8549000" />
+      <workItem from="1587635427580" duration="11509000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="189638000" />
+    <option name="totallyTimeSpent" value="192598000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -390,8 +389,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gamma.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="97">
-          <caret line="59" column="4" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="4" />
+        <state relative-caret-position="298">
+          <caret line="62" column="6" selection-start-line="62" selection-start-column="6" selection-end-line="62" selection-end-column="6" />
           <folding>
             <element signature="e#320#357#0" expanded="true" />
           </folding>
