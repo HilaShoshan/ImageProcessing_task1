@@ -37,7 +37,6 @@ def gammaDisplay(img_path: str, rep: int):
     cv2.namedWindow("Gamma display")
     cv2.imshow("Gamma display", img)
     cv2.createTrackbar("Gamma*100", "Gamma display", 1, 200, on_trackbar)
-    # cv2.resizeWindow("Gamma display", 700, 500)
     while True:
         pos = cv2.getTrackbarPos("Gamma*100", "Gamma display")
         pos = pos / 100

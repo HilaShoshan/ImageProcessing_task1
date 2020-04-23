@@ -189,18 +189,16 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
     error_list = list()
 
     for i in range(nIter):
-        for cell in range(len(q)):  # select the values that each of the segments’ intensities will map to
-            cell_range = np.arange(z[cell], z[cell+1])
-            q[cell] = np.average(cell_range, weights=histOrg[z[cell]:z[cell+1]])  # weighted average
 
-        for bound in range(1, len(z)-1):  # move each boundary to be in the middle of two means
-            z[bound] = (q[bound-1] + q[bound]) / 2
-            # alter the pixels in the new image
-            # new_img[np.logical_and(imOrig >= z[bound-1], imOrig <= z[bound])] = q[bound-1]
-            print(z[bound])
-            the_range = np.arange(z[bound-1], z[bound]+1)
-            print(the_range, "\n")
-            np.put(new_img, the_range, q[bound-1])
+        for cell in range(len(q)):  # select the values that each of the segments’ intensities will map to
+            if cell == len(q) - 1:  # last iteration
+                right = z[cell+1] + 1  # to get 255
+            else:
+                right = z[cell+1]
+            cell_range = np.arange(z[cell], right)
+            q[cell] = np.average(cell_range, weights=histOrg[z[cell]:right])  # weighted average
+            np.put(new_img, cell_range, q[cell])  # alter the pixels in the new image
+
         MSE = np.square(np.subtract(imOrig, new_img)).mean()
         if MSE < min_mse:  # We've found an image with lower MSE
             min_mse = MSE  # update the minimum error
@@ -208,6 +206,9 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
             if isRGB:
                 new_img = back_to_rgb(yiq_img, new_img)  # save in new_img the image in RGB form
             qImage_list.append(new_img)
+
+        for bound in range(1, len(z)-1):  # move each boundary to be in the middle of two means
+            z[bound] = (q[bound-1] + q[bound]) / 2
 
     plt.plot(error_list)
     plt.show()
