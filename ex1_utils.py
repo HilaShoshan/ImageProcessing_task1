@@ -28,8 +28,6 @@ def imReadAndConvert(filename: str, representation: int) -> np.ndarray:
     # normalize
     norm_img = img / 255.0
 
-    print("type is: ", norm_img.dtype)
-
     return norm_img
     pass
 
@@ -173,13 +171,12 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
 
     if np.amax(imOrig) <= 1:  # so the picture is normalized
         imOrig = imOrig * 255
+    imOrig = imOrig.astype('uint8')
 
     # find image's histogram
     histOrg, bin_edges = np.histogram(imOrig, 256, [0, 255])
 
-    print(histOrg)
-
-    new_img = np.zeros(imOrig.shape)
+    im_shape = imOrig.shape
 
     z = init_z(nQuant)  # boundaries
     q = np.zeros(nQuant)  # the optimal values for each ‘cell’
@@ -192,6 +189,8 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
 
     for i in range(nIter):
 
+        new_img = np.zeros(im_shape)
+
         for cell in range(len(q)):  # select the values that each of the segments’ intensities will map to
             if cell == len(q) - 1:  # last iteration
                 right = z[cell+1] + 1  # to get 255
@@ -199,8 +198,7 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
                 right = z[cell+1]
             cell_range = np.arange(z[cell], right)
             q[cell] = np.average(cell_range, weights=histOrg[z[cell]:right])  # weighted average
-            np.put(new_img, cell_range, q[cell])  # alter the pixels in the new image
-
+            new_img[(imOrig >= z[cell]) & (imOrig < right)] = q[cell]  # alter the new value
         MSE = np.square(np.subtract(imOrig, new_img)).mean()
         if MSE < min_mse:  # We've found an image with lower MSE
             min_mse = MSE  # update the minimum error
