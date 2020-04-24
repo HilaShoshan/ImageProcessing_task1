@@ -59,7 +59,7 @@ def test_hist2():
 
 def test_quant():
     corona_gray = imReadAndConvert("beach.jpg", 1)
-    qImage_list, error_list = quantizeImage(corona_gray, 4, 33)
+    qImage_list, error_list = quantizeImage(corona_gray, 3, 20)
     show_img(qImage_list[-1])
 
 

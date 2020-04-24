@@ -36,10 +36,10 @@ def gammaDisplay(img_path: str, rep: int):
         img = cv2.imread(img_path)
     cv2.namedWindow("Gamma display")
     cv2.imshow("Gamma display", img)
-    cv2.createTrackbar("Gamma*100", "Gamma display", 1, 200, on_trackbar)
+    cv2.createTrackbar("Gamma*50", "Gamma display", 1, 100, on_trackbar)
     while True:
-        pos = cv2.getTrackbarPos("Gamma*100", "Gamma display")
-        pos = pos / 100
+        pos = cv2.getTrackbarPos("Gamma*50", "Gamma display")
+        pos = pos / 50  # each number in the slide represents gamma * 50
         new_img = gammaCorrection(img / 255.0, pos)
         cv2.imshow("Gamma display", new_img)
         key = cv2.waitKey(1000)  # Wait until user press some key

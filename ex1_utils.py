@@ -177,6 +177,8 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
     # find image's histogram
     histOrg, bin_edges = np.histogram(imOrig, 256, [0, 255])
 
+    print(histOrg)
+
     new_img = np.zeros(imOrig.shape)
 
     z = init_z(nQuant)  # boundaries
@@ -204,7 +206,7 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
             min_mse = MSE  # update the minimum error
             error_list.append(MSE)
             if isRGB:
-                new_img = back_to_rgb(yiq_img, new_img)  # save in new_img the image in RGB form
+                new_img = back_to_rgb(yiq_img, new_img / 255)  # save in new_img the image in RGB form
             qImage_list.append(new_img)
 
         for bound in range(1, len(z)-1):  # move each boundary to be in the middle of two means
