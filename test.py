@@ -64,9 +64,9 @@ def test_quant():
 
 
 def test_myImage():
-    dog = imReadAndConvert("cute_dog.jpg", 2)
+    dog = imReadAndConvert("testImg1.jpg", 2)
 
-    imDisplay("cute_dog.jpg", 2)
+    imDisplay("testImg1.jpg", 2)
 
     yiq = transformRGB2YIQ(dog)
     plt.imshow(yiq)
