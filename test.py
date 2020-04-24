@@ -67,6 +67,7 @@ def test_myImage():
     dog = imReadAndConvert("testImg1.jpg", 2)
 
     imDisplay("testImg1.jpg", 2)
+    imDisplay("testImg1.jpg", 1)
 
     yiq = transformRGB2YIQ(dog)
     plt.imshow(yiq)
