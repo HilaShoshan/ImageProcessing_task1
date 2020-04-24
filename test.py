@@ -63,6 +63,25 @@ def test_quant():
     show_img(qImage_list[-1])
 
 
+def test_myImage():
+    dog = imReadAndConvert("cute_dog.jpg", 2)
+
+    imDisplay("cute_dog.jpg", 2)
+
+    yiq = transformRGB2YIQ(dog)
+    plt.imshow(yiq)
+    plt.show()
+
+    rgb = transformYIQ2RGB(yiq)
+    plt.imshow(rgb)
+    plt.show()
+
+    imgEq, histOrg, histEQ = hsitogramEqualize(dog)
+
+    qImage_list, error_list = quantizeImage(dog, 4, 5)
+    show_img(qImage_list[-1])
+
+
 def main():
     #test_display()
     #test_RGB2YIQ()
@@ -70,7 +89,8 @@ def main():
     #bgr_yiq_testMyself()
     #test_hist()
     #test_hist2()
-    test_quant()
+    #test_quant()
+    test_myImage()
 
 
 if __name__ == '__main__':
