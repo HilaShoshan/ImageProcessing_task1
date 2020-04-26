@@ -93,10 +93,10 @@ def case_RGB(imgOrig: np.ndarray) -> (bool, np.ndarray, np.ndarray):
     isRGB = bool(imgOrig.shape[-1] == 3)  # check if the image is RGB image
     if (isRGB):
         imgYIQ = transformRGB2YIQ(imgOrig)
-        imgOrig = imgYIQ[:, :, 0]  # Y channel of the YIQ image
+        imgOrig = np.copy(imgYIQ[:, :, 0])  # Y channel of the YIQ image
         return True, imgYIQ, imgOrig
     else:
-        return False, None, imgOrig
+        return False, None, np.copy(imgOrig)
     pass
 
 
@@ -165,6 +165,14 @@ def init_z(nQuant: int) -> np.ndarray:
     pass
 
 
+def error(imOrig: np.ndarray, new_img: np.ndarray) -> float:
+    all_pixels = imOrig.size
+    sub = np.subtract(new_img, imOrig)
+    pix_sum = np.sum(np.square(sub))
+    return np.sqrt(pix_sum) / all_pixels
+    pass
+
+
 def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarray], List[float]):
 
     isRGB, yiq_img, imOrig = case_RGB(imOrig)
@@ -181,8 +189,6 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
     z = init_z(nQuant)  # boundaries
     q = np.zeros(nQuant)  # the optimal values for each ‘cell’
 
-    min_mse = np.inf  # saving the optimal (minimal) MSE
-
     # lists to return
     qImage_list = list()
     error_list = list()
@@ -198,17 +204,21 @@ def quantizeImage(imOrig: np.ndarray, nQuant: int, nIter: int) -> (List[np.ndarr
                 right = z[cell+1]
             cell_range = np.arange(z[cell], right)
             q[cell] = np.average(cell_range, weights=histOrg[z[cell]:right])  # weighted average
-            new_img[(imOrig >= z[cell]) & (imOrig < right)] = q[cell]  # alter the new value
-        MSE = np.square(np.subtract(imOrig, new_img)).mean()
-        if MSE < min_mse:  # We've found an image with lower MSE
-            min_mse = MSE  # update the minimum error
-            error_list.append(MSE)
-            if isRGB:
-                new_img = back_to_rgb(yiq_img, new_img / 255)  # save in new_img the image in RGB form
-            qImage_list.append(new_img)
+            condition = np.logical_and(imOrig >= z[cell], imOrig < right)
+            new_img[condition] = q[cell]  # alter the new value
+
+        MSE = error(imOrig / 255.0, new_img / 255.0)
+        error_list.append(MSE)
+        if isRGB:
+            new_img = back_to_rgb(yiq_img, new_img / 255.0)  # save in new_img the image in RGB form
+        qImage_list.append(new_img)
 
         for bound in range(1, len(z)-1):  # move each boundary to be in the middle of two means
             z[bound] = (q[bound-1] + q[bound]) / 2
+
+        if len(error_list) >= 2:
+            if np.abs(error_list[-1] - error_list[-2]) <= 0.000001:  # converges
+                break
 
     plt.plot(error_list)
     plt.show()
